@@ -51,7 +51,7 @@ oidc-test-app/
 ├── package.json            # Root-level scripts for dev (concurrently)
 └── README.md               # Project documentation
 
-
+```
 
 ---
 

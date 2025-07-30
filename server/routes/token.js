@@ -25,8 +25,23 @@ router.post('/', async (req, res) => {
     const response = await axios.post(
       process.env.TOKEN_ENDPOINT,
       params.toString(),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+       responseType: 'text', // 🛠️ Force response to be treated as raw text
+        transformResponse: [data => data] // 🛠️ Disable auto JSON parsing
+       }
+      
     );
+
+    console.log("Raw response:", response.data);
+
+  // Try manually parsing it if needed
+  let tokenData;
+  try {
+    tokenData = JSON.parse(response.data);
+  } catch (parseErr) {
+    console.error("Failed to parse response as JSON:", parseErr.message);
+    return res.status(500).json({ error: 'Invalid JSON response from token endpoint' });
+  }
 
     res.json({ access_token: response.data.access_token });
   } catch (err) {

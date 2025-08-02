@@ -32,21 +32,25 @@ router.post('/', async (req, res) => {
       
     );
 
-    console.log("Raw response:", response.data);
+    // return res.json(response.data);
+    const rawData = response.data;
 
-  // Try manually parsing it if needed
-  let tokenData;
-  try {
-    tokenData = JSON.parse(response.data);
-  } catch (parseErr) {
-    console.error("Failed to parse response as JSON:", parseErr.message);
-    return res.status(500).json({ error: 'Invalid JSON response from token endpoint' });
-  }
+    let parsedData;
 
-    res.json({ access_token: response.data.access_token });
+    if (typeof rawData === 'string') {
+      try {
+        parsedData = JSON.parse(rawData); // Convert JSON string to object
+      } catch (err) {
+        return res.status(500).json({ error: 'Invalid JSON from API' });
+      }
+    } else {
+      parsedData = rawData; // already an object
+    }
+
+return res.json(parsedData);
   } catch (err) {
     console.error(err.response?.data || err.message);
-    res.status(500).json({ error: 'Token request failed' });
+    return res.status(500).json({ error: 'Token request failed' });
   }
 });
 
